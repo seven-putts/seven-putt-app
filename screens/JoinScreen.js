@@ -66,6 +66,8 @@ const JoinScreen = () => {
     )
       return setprivateGameError("The game has already begun");
 
+    if (foundGame?.gameOver) return setprivateGameError("The game is over");
+
     if (foundGame.users.find((x) => x.userId === user.uid))
       return dispatch(toggleLobby({ ...foundGame }));
 
@@ -83,6 +85,10 @@ const JoinScreen = () => {
         ],
       })
       .then(() => dispatch(toggleLobby({ ...foundGame })));
+
+    firestore.collection("users").doc(user.uid).update({
+      currentGame: foundGame,
+    });
   };
 
   return (

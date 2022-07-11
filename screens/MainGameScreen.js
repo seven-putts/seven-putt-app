@@ -17,7 +17,11 @@ import {
 import { baskets, discs } from "../FacilitiesData";
 import { Icon } from "react-native-elements";
 import { useDispatch, useSelector } from "react-redux";
-import { resetGame, toggleGame } from "../reduxslice/sevenputtSlice";
+import {
+  resetGame,
+  toggleGame,
+  toggleLobby,
+} from "../reduxslice/sevenputtSlice";
 import AwesomeAlert from "react-native-awesome-alerts";
 import { useNavigation } from "@react-navigation/native";
 import RoundCard from "../components/RoundCard";
@@ -53,6 +57,10 @@ const MainGameScreen = () => {
   const handleGoHome = () => {
     dispatch(toggleGame());
     dispatch(resetGame());
+
+    if (inLobby) {
+      dispatch(toggleLobby());
+    }
   };
 
   useEffect(async () => {

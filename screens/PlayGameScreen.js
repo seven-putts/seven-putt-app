@@ -172,24 +172,23 @@ const PlayGame = () => {
       let numOfCompleted = 0;
 
       MPData.users.forEach((u) => {
-        console.log(u.game.round3["Section D"]);
-        if (u.game.round3[6]) {
-          numOfCompleted += 1;
+        if (u.game) {
+          if (u.game.round3) {
+            if (u.game.round3["Section D"]) {
+              numOfCompleted += 1;
+            }
+          }
         }
       });
 
-      // console.log(numOfCompleted);
-
-      // if (numOfCompleted >= MPData.users.length) {
-      //   firestore
-      //     .collection("MultiPlayerGame")
-      //     .doc(multiplayerOptions?.id)
-      //     .update({
-      //       gameOver: true,
-      //     });
-
-      //   console.log(numOfCompleted);
-      // }
+      if (numOfCompleted >= MPData.users.length) {
+        firestore
+          .collection("MultiPlayerGame")
+          .doc(multiplayerOptions?.id)
+          .update({
+            gameOver: true,
+          });
+      }
     };
 
     if (MPData) {
@@ -344,9 +343,12 @@ const PlayGame = () => {
       .filter((elem) => elem.userId !== user.uid)
       .map((elem) => {
         let userInfo = users.find((x) => x.uid === elem.userId);
-        let userGame = elem.game[`round${secData.round}`]
-          ? elem.game[`round${secData.round}`][secData.section]
-          : null;
+        let userGame = null;
+        if (elem.game) {
+          userGame = elem.game[`round${secData.round}`]
+            ? elem.game[`round${secData.round}`][secData.section]
+            : null;
+        }
 
         available.push({ name: userInfo, userGame });
       });
@@ -390,6 +392,8 @@ const PlayGame = () => {
 
   const isgameOver = () => {
     if (inLobby) {
+      if (MPData.gameOver) return true;
+
       if (secData.section === "Section D" && secData.round == 3) {
         return true;
       } else {
@@ -402,6 +406,13 @@ const PlayGame = () => {
         return false;
       }
     }
+  };
+
+  const handleGameOver = () => {
+    viewResult();
+    firestore.collection("users").doc(user.uid).update({
+      currentGame: null,
+    });
   };
 
   if (!fontsLoaded) return <AppLoading />;
@@ -585,7 +596,7 @@ const PlayGame = () => {
             </View>
           ) : (
             <TouchableOpacity
-              onPress={() => viewResult()}
+              onPress={() => handleGameOver()}
               style={{
                 width: "80%",
                 backgroundColor: "#5030e6",

@@ -25,8 +25,6 @@ const AvGame = ({ game }) => {
         if (snapshot.data().users.length >= snapshot.data().maxPlayers)
           return Alert.alert("Room already full");
 
-        // if (currentUser) return dispatch(toggleLobby({ ...snapshot.data() }));
-
         firestore
           .collection("MultiPlayerGame")
           .doc(game.id)
@@ -41,6 +39,10 @@ const AvGame = ({ game }) => {
           );
 
         dispatch(toggleLobby({ ...snapshot.data() }));
+
+        firestore.collection("users").doc(user.uid).update({
+          currentGame: snapshot.data(),
+        });
       });
   };
 
