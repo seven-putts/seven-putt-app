@@ -32,14 +32,6 @@ const GameCard = ({
       }
       style={[styles.container, { backgroundColor: bgColor }]}
     >
-      {name === "Multi player" && (
-        <Icon
-          style={styles.inGameBar}
-          name="fiber-manual-record"
-          type="material"
-        />
-      )}
-
       <Text style={[styles.title, { color: textColor }]}>{name}</Text>
       <Icon name={iconName} type="material" color={textColor} />
       <Text style={styles.summary}>{summary}</Text>
