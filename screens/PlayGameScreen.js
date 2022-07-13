@@ -474,7 +474,7 @@ const PlayGame = () => {
                     <Text>{element.name?.fullName}</Text>
 
                     <Text style={{ color: "grey" }}>
-                      Waitying for {element.name?.fullName}
+                      Waiting for {element.name?.fullName}
                     </Text>
                   </View>
                 );

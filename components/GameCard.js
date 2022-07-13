@@ -14,10 +14,10 @@ const GameCard = ({
   dispatch,
 }) => {
   const navigation = useNavigation();
-  const { multiplayerOptions } = useSelector((state) => state.sevenPutt);
 
   const HandleSingleMode = () => {
     navigation.navigate("SelectCompany");
+    dispatch(changeMode("Single Player"));
   };
 
   const HandleMMultiplayerMode = () => {

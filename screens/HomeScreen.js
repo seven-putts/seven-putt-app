@@ -10,8 +10,6 @@ import {
 } from "@expo-google-fonts/piazzolla";
 import AppLoading from "expo-app-loading";
 import { useDispatch, useSelector } from "react-redux";
-import UserRank from "../components/UserRank";
-import Firebase from "../firebase";
 
 const HomeScreen = () => {
   const [fontsLoaded] = useFonts({
@@ -53,6 +51,7 @@ const HomeScreen = () => {
           textColor={"#f47b04"}
           bgColor={"#f9efcf"}
           iconName="person"
+          dispatch={dispatch}
           summary={"Play 7-putt solo and improve your skills"}
         />
         <GameCard

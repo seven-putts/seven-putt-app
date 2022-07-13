@@ -26,7 +26,6 @@ const JoinScreen = () => {
   const [loading, setloading] = useState(false);
   const [privateGameError, setprivateGameError] = useState(null);
 
-  const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const { user, currentGame } = useSelector((state) => state.sevenPutt);
