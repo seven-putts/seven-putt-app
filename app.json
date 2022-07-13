@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "seven-putt",
-    "slug": "seven-putt",
+    "name": "7-putt",
+    "slug": "7-putt",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
