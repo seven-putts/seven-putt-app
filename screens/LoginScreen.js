@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   StyleSheet,
@@ -17,6 +18,7 @@ import {
 } from "@expo-google-fonts/piazzolla";
 import AppLoading from "expo-app-loading";
 import Firebase from "../firebase";
+import { useNavigation } from "@react-navigation/native";
 
 const pryColor = "#f47b04";
 const auth = Firebase.auth();
@@ -25,8 +27,9 @@ const LoginScreen = () => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [error, seterror] = useState(null);
-
   const [isVisible, setisVisible] = useState(false);
+
+  const navigation = useNavigation();
 
   const toggleVisibility = () => {
     setisVisible(!isVisible);
@@ -34,8 +37,23 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     await auth
-      .signInWithEmailAndPassword(email, password)
+      .signInWithEmailAndPassword(email.toLowerCase(), password)
       .catch((err) => seterror(err.message));
+  };
+
+  const handleForgotPassword = () => {
+    if (email == "") return Alert.alert("Please enter mail to reset password");
+
+    auth
+      .sendPasswordResetEmail(email.toLowerCase())
+      .then(function () {
+        alert("Please check your mail to reset password");
+      })
+      .catch(function (e) {
+        console.log(e);
+      });
+
+    navigation.navigate("Reset", { email: email });
   };
 
   const [fontsLoaded] = useFonts({
@@ -99,6 +117,20 @@ const LoginScreen = () => {
 
         <TouchableOpacity onPress={() => handleLogin()} style={styles.loginBtn}>
           <Text style={styles.btnText}>Login</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => handleForgotPassword()}>
+          <Text
+            style={{
+              color: "yellow",
+              fontSize: 18,
+              textDecorationStyle: "solid",
+              textDecorationLine: "underline",
+              marginTop: 14,
+            }}
+          >
+            Forgot Password ?
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

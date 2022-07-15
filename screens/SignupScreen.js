@@ -42,7 +42,7 @@ const SignupScreen = () => {
 
   const Signup = async () => {
     await auth
-      .createUserWithEmailAndPassword(email, password)
+      .createUserWithEmailAndPassword(email.toLowerCase(), password)
       .then((data) => {
         firestore.collection("users").doc(data.user.uid).set({
           uid: data.user.uid,
@@ -52,8 +52,6 @@ const SignupScreen = () => {
       })
       .catch((err) => seterror(err.message));
   };
-
-  console.log(error);
 
   if (!fontsLoaded) return <AppLoading />;
 
