@@ -106,14 +106,15 @@ const JoinScreen = () => {
         <ScrollView style={{ flex: 1, paddingTop: 10 }}>
           {!loading ? (
             publicGames
-              .filter((game) => game.type === "public" && game.isOpen)
+              .filter((game) => game.type === "public" && !game.gameOver)
               .map((game) => <AvGame game={game} key={game.id} />)
           ) : (
             <ActivityIndicator size="large" color={pryColor} />
           )}
 
-          {publicGames.filter((game) => game.type === "public" && game.isOpen)
-            .length < 1 && (
+          {publicGames.filter(
+            (game) => game.type === "public" && !game.gameOver
+          ).length < 1 && (
             <Text style={{ textAlign: "center", fontSize: 20, color: "gray" }}>
               No games available
             </Text>

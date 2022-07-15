@@ -48,12 +48,11 @@ const LoginScreen = () => {
       .sendPasswordResetEmail(email.toLowerCase())
       .then(function () {
         alert("Please check your mail to reset password");
+        navigation.navigate("Reset", { email: email });
       })
       .catch(function (e) {
-        console.log(e);
+        seterror(e.message);
       });
-
-    navigation.navigate("Reset", { email: email });
   };
 
   const [fontsLoaded] = useFonts({

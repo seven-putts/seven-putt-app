@@ -1,5 +1,5 @@
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "react-native-elements";
 import SportLogo from "../Svgs/SportLogo";
 import GameCard from "../components/GameCard";
@@ -10,6 +10,11 @@ import {
 } from "@expo-google-fonts/piazzolla";
 import AppLoading from "expo-app-loading";
 import { useDispatch, useSelector } from "react-redux";
+import { useLayoutEffect } from "react";
+import UserRank from "../components/UserRank";
+import Firebase from "../firebase";
+
+const firestore = Firebase.firestore();
 
 const HomeScreen = () => {
   const [fontsLoaded] = useFonts({
@@ -18,12 +23,79 @@ const HomeScreen = () => {
   });
 
   const { user } = useSelector((state) => state.sevenPutt);
+  const [mpGames, setmpGames] = useState([]);
+  const [MostPuttsInGameRank, setMostPuttsInGameRank] = useState([]);
+  const [MostMissInGameRank, setMostMissInGameRank] = useState([]);
+  const [overallTotal, setoverallTotal] = useState([]);
+  const [users, setusers] = useState([]);
+
   const dispatch = useDispatch();
+
+  useEffect(async () => {
+    const getRank = async () => {
+      await firestore
+        .collection("MultiPlayerGame")
+        .get()
+        .then((snapshot) => {
+          setmpGames(snapshot.docs.map((doc) => doc.data()));
+        });
+    };
+
+    await firestore
+      .collection("users")
+      .get()
+      .then((snapshot) => {
+        setusers(snapshot.docs.map((doc) => doc.data()));
+      });
+
+    getRank();
+  }, []);
+
+  useEffect(() => {
+    const fetchResults = () => {
+      let results = [];
+
+      mpGames.forEach((game) => {
+        if (game.results) {
+          results = [...results, ...game.results];
+        }
+      });
+
+      setMostPuttsInGameRank(results.sort((a, b) => b.Total - a.Total));
+      setMostMissInGameRank(results.sort((a, b) => b.TotalMiss - a.TotalMiss));
+
+      let userIds = [];
+
+      results.forEach((res) => {
+        if (!userIds.includes(res.userId)) {
+          userIds.push(res.userId);
+        }
+      });
+
+      userTotals = [];
+
+      userIds.forEach((u) => {
+        let userTotal = 0;
+        let resForUser = results.filter((res) => res.userId === u);
+        let username = users.find((x) => x.uid === u);
+
+        resForUser.forEach((rx) => {
+          userTotal += rx.Total;
+        });
+
+        userTotals.push({ username: username.fullName, overall: userTotal });
+      });
+
+      setoverallTotal(userTotals.sort((a, b) => b.overall - a.overall));
+    };
+
+    fetchResults();
+  }, [mpGames]);
 
   if (!fontsLoaded) return <AppLoading />;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Image
           source={require("../assets/7puttLogo.jpeg")}
@@ -63,6 +135,54 @@ const HomeScreen = () => {
           summary={"Play against other player and test out your skills"}
         />
       </View>
+
+      <Text style={[styles.GameText, { marginTop: 30 }]}>Leaderboards</Text>
+
+      <View style={[styles.topPutts, { marginBottom: 20 }]}>
+        <Text style={styles.LeaderboardText}>Mosts Overal Putts</Text>
+        {overallTotal.length > 0 && overallTotal.length < 4 ? (
+          overallTotal.map((uGame) => (
+            <UserRank name={uGame.username} value={uGame.overall} />
+          ))
+        ) : overallTotal.length > 3 ? (
+          overallTotal
+            .splice(0, 3)
+            .map((uGame) => (
+              <UserRank name={uGame.username} value={uGame.overall} />
+            ))
+        ) : (
+          <>
+            <UserRank />
+            <UserRank />
+            <UserRank />
+          </>
+        )}
+      </View>
+
+      <View style={styles.topPutts}>
+        <Text style={styles.LeaderboardText}>Most Putts in a Game</Text>
+        {MostPuttsInGameRank.length > 0 && MostPuttsInGameRank.length < 4 ? (
+          MostPuttsInGameRank.sort((a, b) => b.Total - a.Total).map((urank) => {
+            let username = users.find((x) => x.uid === urank.userId)?.fullName;
+            return <UserRank name={username} value={urank.Total} />;
+          })
+        ) : MostPuttsInGameRank.length > 3 ? (
+          MostPuttsInGameRank.sort((a, b) => b.Total - a.Total)
+            .slice(0, 3)
+            .map((urank) => {
+              let username = users.find(
+                (x) => x.uid === urank.userId
+              )?.fullName;
+              return <UserRank name={username} value={urank.Total} />;
+            })
+        ) : (
+          <>
+            <UserRank />
+            <UserRank />
+            <UserRank />
+          </>
+        )}
+      </View>
     </ScrollView>
   );
 };
@@ -71,10 +191,9 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "white",
-    paddingTop: 30,
     paddingHorizontal: 15,
+    paddingVertical: 20,
   },
 
   header: {

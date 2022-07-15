@@ -238,6 +238,174 @@ const PlayGame = () => {
     return setcurrentRound([]);
   };
 
+  const fetchCurrentUser = () => {
+    if (!MPData) return null;
+    const userinGame = MPData.users.find((x) => x.userId == user.uid);
+
+    if (!userinGame.game) return null;
+    return userinGame.game;
+  };
+
+  const checkMPHighestSection = () => {
+    let HighestSection = 0;
+    let HighestSectionMiss = 0;
+
+    let HighestRound = 0;
+    let HighestRoundMiss = 0;
+
+    let Total = 0;
+    let TotalMiss = 0;
+
+    if (!fetchCurrentUser())
+      return {
+        HighestSection,
+        HighestSectionMiss,
+        Total,
+        TotalMiss,
+        HighestRound,
+        HighestRoundMiss,
+      };
+
+    const R1S1 = fetchCurrentUser().round1["Section A"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R1S1Miss = 7 - R1S1;
+
+    const R1S2 = fetchCurrentUser().round1["Section B"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R1S2Miss = 7 - R1S2;
+
+    const R1S3 = fetchCurrentUser().round1["Section C"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R1S3Miss = 7 - R1S3;
+
+    const R1S4 = fetchCurrentUser().round1["Section D"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R1S4Miss = 7 - R1S4;
+
+    const R2S1 = fetchCurrentUser().round2["Section A"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R2S1Miss = 7 - R2S1;
+
+    const R2S2 = fetchCurrentUser().round2["Section B"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R2S2Miss = 7 - R2S2;
+
+    const R2S3 = fetchCurrentUser().round2["Section C"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R2S3Miss = 7 - R2S3;
+
+    const R2S4 = fetchCurrentUser().round2["Section D"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R2S4Miss = 7 - R2S4;
+
+    const R3S1 = fetchCurrentUser().round3["Section A"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R3S1Miss = 7 - R3S1;
+
+    const R3S2 = fetchCurrentUser().round3["Section B"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R3S2Miss = 7 - R3S2;
+
+    const R3S3 = fetchCurrentUser().round3["Section C"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R3S3Miss = 7 - R3S3;
+
+    const R3S4 = fetchCurrentUser().round3["Section A"].filter(
+      (attempt) => attempt === "success"
+    ).length;
+    const R3S4Miss = 7 - R3S4;
+
+    const round1Get = R1S1 + R1S2 + R1S3 + R1S4;
+    const round1Miss = R1S1Miss + R1S2Miss + R1S3Miss + R1S4Miss;
+
+    const round2Get = R2S1 + R2S2 + R2S3 + R2S4;
+    const round2Miss = R2S1Miss + R2S2Miss + R2S3Miss + R2S4Miss;
+
+    const round3Get = R3S1 + R3S2 + R3S3 + R3S4;
+    const round3Miss = R3S1Miss + R3S2Miss + R3S3Miss + R3S4Miss;
+
+    const secScores = [
+      R1S1,
+      R1S2,
+      R1S3,
+      R1S4,
+      R2S1,
+      R2S2,
+      R2S3,
+      R2S4,
+      R3S1,
+      R3S2,
+      R3S3,
+      R3S4,
+    ];
+
+    const secMisses = [
+      R1S1Miss,
+      R1S2Miss,
+      R1S3Miss,
+      R1S4Miss,
+      R2S1Miss,
+      R2S2Miss,
+      R2S3Miss,
+      R2S4Miss,
+      R3S1Miss,
+      R3S2Miss,
+      R3S3Miss,
+      R3S4Miss,
+    ];
+
+    secScores.forEach((val) => {
+      Total += val;
+
+      if (val >= HighestSection) {
+        HighestSection = val;
+      }
+    });
+
+    secMisses.forEach((val) => {
+      TotalMiss += val;
+
+      if (val >= HighestSectionMiss) {
+        HighestSectionMiss = val;
+      }
+    });
+
+    const roundScores = [round1Get, round2Get, round3Get];
+    const roundMisses = [round1Miss, round2Miss, round3Miss];
+
+    roundScores.forEach((val) => {
+      if (val >= HighestRound) {
+        HighestRound = val;
+      }
+    });
+
+    roundMisses.forEach((val) => {
+      if (val >= HighestRoundMiss) {
+        HighestRoundMiss = val;
+      }
+    });
+
+    return {
+      HighestSection,
+      HighestSectionMiss,
+      Total,
+      TotalMiss,
+      HighestRound,
+      HighestRoundMiss,
+    };
+  };
+
   const handleNext = (attempt) => {
     if (step >= 7) {
       if (inLobby) {
@@ -410,8 +578,18 @@ const PlayGame = () => {
 
   const handleGameOver = () => {
     viewResult();
+
+    let results = MPData.results ? MPData.results : [];
+    results.push({ ...checkMPHighestSection(), userId: user.uid });
+
+    console.log(results);
+
     firestore.collection("users").doc(user.uid).update({
       currentGame: null,
+    });
+
+    firestore.collection("MultiPlayerGame").doc(multiplayerOptions.id).update({
+      results: results,
     });
   };
 
