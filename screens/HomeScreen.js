@@ -104,7 +104,9 @@ const HomeScreen = () => {
 
         <View style={styles.user}>
           <Icon name="account-circle" type="material" color={"#f47b04"} />
-          <Text style={styles.userName}>{user?.fullName}</Text>
+          <Text style={styles.userName}>
+            {user.usertag ? user.usertag : user.fullName}
+          </Text>
         </View>
       </View>
 
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  userName: { fontSize: 13, color: "black", fontWeight: "600" },
+  userName: { fontSize: 13, color: "grey", fontWeight: "600" },
 
   banner: {
     backgroundColor: "#f47b04",

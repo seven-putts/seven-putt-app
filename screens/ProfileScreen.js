@@ -172,6 +172,10 @@ const ProfileScreen = () => {
           <Text style={{ fontSize: 16, color: "darkslategray" }}>
             {user?.email}
           </Text>
+
+          <Text style={{ marginTop: 10, fontSize: 16, color: "darkslategray" }}>
+            {user?.usertag}
+          </Text>
         </View>
 
         <TouchableOpacity
@@ -273,6 +277,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     borderRadius: 10,
     justifyContent: "center",
+    maxHeight: 40,
   },
 
   btnText: {

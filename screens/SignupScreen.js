@@ -18,6 +18,7 @@ import {
 } from "@expo-google-fonts/piazzolla";
 import AppLoading from "expo-app-loading";
 import Firebase from "../firebase";
+import { genrateRandomNumbers } from "../utilities";
 
 const pryColor = "#f47b04";
 const auth = Firebase.auth();
@@ -44,11 +45,15 @@ const SignupScreen = () => {
     await auth
       .createUserWithEmailAndPassword(email.toLowerCase(), password)
       .then((data) => {
-        firestore.collection("users").doc(data.user.uid).set({
-          uid: data.user.uid,
-          email: email,
-          fullName: fullName,
-        });
+        firestore
+          .collection("users")
+          .doc(data.user.uid)
+          .set({
+            uid: data.user.uid,
+            email: email,
+            fullName: fullName,
+            usertag: fullName.split(" ")[0] + "#" + genrateRandomNumbers(),
+          });
       })
       .catch((err) => seterror(err.message));
   };
@@ -61,7 +66,7 @@ const SignupScreen = () => {
       behavior="padding"
       keyboardVerticalOffset={90}
     >
-      <Text style={styles.signupText}>Signup to 7-putt</Text>
+      <Text style={styles.signupText}>Signup</Text>
 
       <Image
         source={require("../assets/7puttLogo.jpeg")}

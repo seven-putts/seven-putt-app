@@ -629,7 +629,9 @@ const PlayGame = () => {
               style={{ flexDirection: "row", alignItems: "center", margin: 10 }}
               key={(index + 1).toString()}
             >
-              <Text style={{ fontSize: 16 }}>PUTT {index + 1}: </Text>
+              <Text style={{ fontSize: 16 }}>
+                PUTT {index + 1} ({5 * (index + 1)} ft):{" "}
+              </Text>
               {attempt === "fail" ? (
                 <Icon name="close" type="material" color="red" />
               ) : (
@@ -794,7 +796,7 @@ const PlayGame = () => {
       ) : (
         <View style={styles.selectPut}>
           <Text style={styles.selectPutHeader}>
-            Putt {currentRound.length + 1}
+            Putt {currentRound.length + 1} ({5 * (currentRound.length + 1)} ft)
           </Text>
 
           <View style={[styles.selectBtnContainers]}>
@@ -853,6 +855,7 @@ const styles = StyleSheet.create({
 
   selectPutHeader: {
     fontSize: 30,
+    marginBottom: 5,
   },
 
   PuttBtn: {

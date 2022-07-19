@@ -68,7 +68,7 @@ const LoginScreen = () => {
       behavior="padding"
       keyboardVerticalOffset={90}
     >
-      <Text style={styles.loginText}>Login to 7-putt</Text>
+      <Text style={styles.loginText}>Login</Text>
 
       <Image
         source={require("../assets/7puttLogo.jpeg")}
