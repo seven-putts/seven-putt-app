@@ -17,7 +17,7 @@ import {
   Piazzolla_600SemiBold,
 } from "@expo-google-fonts/piazzolla";
 import AppLoading from "expo-app-loading";
-import Firebase from "../firebase";
+import Firebase, { provider } from "../firebase";
 import { useNavigation } from "@react-navigation/native";
 
 const pryColor = "#f47b04";

@@ -579,18 +579,21 @@ const PlayGame = () => {
   const handleGameOver = () => {
     viewResult();
 
-    let results = MPData.results ? MPData.results : [];
-    results.push({ ...checkMPHighestSection(), userId: user.uid });
+    if (inLobby) {
+      let results = MPData.results ? MPData.results : [];
+      results.push({ ...checkMPHighestSection(), userId: user.uid });
 
-    console.log(results);
+      firestore.collection("users").doc(user.uid).update({
+        currentGame: null,
+      });
 
-    firestore.collection("users").doc(user.uid).update({
-      currentGame: null,
-    });
-
-    firestore.collection("MultiPlayerGame").doc(multiplayerOptions.id).update({
-      results: results,
-    });
+      firestore
+        .collection("MultiPlayerGame")
+        .doc(multiplayerOptions.id)
+        .update({
+          results: results,
+        });
+    }
   };
 
   if (!fontsLoaded) return <AppLoading />;
